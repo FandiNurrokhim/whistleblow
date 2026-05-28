@@ -1,67 +1,226 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Penilaian 360° & Whistleblowing
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform manajemen kinerja tim yang transparan — penilaian antar karyawan, pelaporan insiden budaya kerja, dan dashboard laporan kinerja.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Stack Teknologi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Layer | Teknologi | Versi |
+|---|---|---|
+| Backend | Laravel | 13.x |
+| Frontend | React + Inertia.js | 18.x + 2.x |
+| Styling | Tailwind CSS | 3.x |
+| Build Tool | Vite | 6.x |
+| Database | MySQL | 8.0+ |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Persyaratan Sistem
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Pastikan semua tools berikut sudah terinstal sebelum memulai:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Tool | Versi Minimum | Cek Versi |
+|---|---|---|
+| PHP | **8.4+** | `php --version` |
+| Composer | 2.x | `composer --version` |
+| Node.js | **20.x (LTS)** | `node --version` |
+| NPM | 10.x | `npm --version` |
+| MySQL | 8.0+ | `mysql --version` |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> ⚠️ **PHP 8.4 wajib.** Laravel 13 tidak berjalan di PHP versi di bawah 8.4.
+>
+> ⚠️ **Node.js 20 (LTS) direkomendasikan.** Vite 6 memerlukan Node.js 18+.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Instalasi
 
-### Premium Partners
+### 1. Clone Repository
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+git clone <url-repository> nama-folder
+cd nama-folder
+```
 
-## Contributing
+### 2. Salin File Environment
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+```
 
-## Code of Conduct
+### 3. Konfigurasi Database
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Buka `.env` dan sesuaikan konfigurasi database:
 
-## Security Vulnerabilities
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+> Buat database kosong terlebih dahulu di MySQL sebelum melanjutkan.
 
-## License
+### 4. Install Dependency PHP
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-"# whistleblow" 
+```bash
+composer install
+```
+
+### 5. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+### 6. Jalankan Migrasi Database
+
+```bash
+php artisan migrate
+```
+
+Jika ingin mulai dari awal (drop semua tabel lalu migrate ulang):
+
+```bash
+php artisan migrate:fresh
+```
+
+### 7. Jalankan Seeder
+
+```bash
+php artisan db:seed
+```
+
+Seeder yang tersedia dan urutan eksekusinya:
+
+| Seeder | Fungsi |
+|---|---|
+| `RoleSeeder` | Buat role: Super Admin, Admin, HR, Manager, Staff |
+| `PermissionSeeder` | Buat permission yang dibutuhkan |
+| `UserSeeder` | Buat user default (Super Admin) |
+| `MenuSeeder` | Buat menu navigasi sidebar/navbar |
+| `AssessmentCriteriaSeeder` | Buat kriteria penilaian default |
+| `WhistleblowQuotaSeeder` | Generate kuota whistleblow untuk semua user |
+
+Jalankan seeder tertentu secara individual:
+
+```bash
+php artisan db:seed --class=MenuSeeder
+php artisan db:seed --class=WhistleblowQuotaSeeder
+```
+
+### 8. Install Dependency Node.js
+
+```bash
+npm install
+```
+
+---
+
+## Menjalankan Aplikasi
+
+Buka **dua terminal** secara bersamaan:
+
+**Terminal 1 — Backend (Laravel)**
+
+```bash
+php artisan serve
+```
+
+Aplikasi berjalan di: `http://localhost:8000`
+
+**Terminal 2 — Frontend (Vite Dev Server)**
+
+```bash
+npm run dev
+```
+
+Buka browser ke `http://localhost:8000`.
+
+---
+
+## Build untuk Production
+
+```bash
+npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+---
+
+## Akun Default
+
+Setelah seeder dijalankan, gunakan akun berikut untuk login:
+
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | `superadmin@example.com` | `password` |
+
+> Akun Staff dan Manager dibuat oleh Admin melalui halaman **Manajemen Pengguna**.
+
+---
+
+## Struktur Role & Akses
+
+| Role | Layout | Akses Utama |
+|---|---|---|
+| Super Admin | Sidebar | Semua fitur |
+| Admin | Sidebar | Semua fitur kecuali system |
+| HR | Sidebar | User, laporan, kuota, status whistleblow |
+| Manager | Navbar | Dashboard, penilaian tim, report |
+| Staff | Navbar | Penilaian rekan, skor sendiri, whistleblow |
+
+---
+
+## Troubleshooting
+
+**Error: `Class not found` setelah composer install**
+
+```bash
+composer dump-autoload
+```
+
+**Error: `SQLSTATE table not found`**
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+**Error: Halaman kosong / Vite manifest not found**
+
+```bash
+npm run build
+# atau jalankan ulang:
+npm run dev
+```
+
+**Error: `php_network_getaddresses` atau koneksi database gagal**
+
+Pastikan MySQL berjalan dan konfigurasi `.env` sudah benar.
+
+**Error: 403 setelah login**
+
+Pastikan user memiliki `is_approved = true` di database dan memiliki role yang valid (Super Admin / Admin / HR / Manager / Staff).
+
+---
+
+## Perintah Berguna
+
+```bash
+# Clear semua cache
+php artisan optimize:clear
+
+# Lihat semua route
+php artisan route:list
+
+# Buat storage symlink (untuk upload file)
+php artisan storage:link
+
+# Reset kuota whistleblow bulan ini
+php artisan db:seed --class=WhistleblowQuotaSeeder
+```
