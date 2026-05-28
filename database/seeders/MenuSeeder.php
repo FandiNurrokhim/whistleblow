@@ -59,14 +59,23 @@ class MenuSeeder extends Seeder
             'route'    => 'whistleblow.index',
         ]);
 
+        Menu::create([
+            'type'     => 'PARENT',
+            'header'   => 'Whistleblow',
+            'title_id' => 'Pengaturan Kuota',
+            'title_en' => 'Quota Settings',
+            'icon'     => 'fa-solid fa-gauge',
+            'route'    => 'admin.whistleblow-quota.index',
+        ]);
+
         // ── Laporan ──────────────────────────────────────────────
-        // Menu::create([
-        //     'type'     => 'PARENT',
-        //     'title_id' => 'Laporan',
-        //     'title_en' => 'Reports',
-        //     'icon'     => 'fa-solid fa-chart-bar',
-        //     'route'    => 'admin.report.index',
-        // ]);
+        Menu::create([
+            'type'     => 'PARENT',
+            'title_id' => 'Laporan',
+            'title_en' => 'Reports',
+            'icon'     => 'fa-solid fa-chart-bar',
+            'route'    => 'report.index',
+        ]);
 
         // ── Manajemen Pengguna ───────────────────────────────────
         Menu::create([

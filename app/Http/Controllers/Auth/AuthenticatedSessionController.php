@@ -13,20 +13,14 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
+            'status'           => session('status'),
         ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
@@ -35,38 +29,29 @@ class AuthenticatedSessionController extends Controller
 
         if (!$user->is_approved) {
             Auth::logout();
-
             return back()->withErrors([
-                'email' => 'Akun belum di-approve admin kampus. Silakan hubungi admin.'
+                'email' => 'Akun Anda belum diaktifkan. Silakan hubungi administrator.',
             ]);
         }
 
         $request->session()->regenerate();
 
-        if ($user->hasRole('Super Admin')) {
-            return redirect()->route('admin.dashboard.index');
+        // Staff langsung ke halaman assessment mereka
+        if ($user->hasRole('Staff')) {
+            return redirect()->route('assessment.index');
         }
-        if ($user->hasRole('Mahasiswa')) {
-            return redirect()->route('admin.dashboard.student.index');
-        }
-        if ($user->hasRole('Dosen')) {
-            return redirect()->route('admin.dashboard.lecturer.index');
-        }
-        
-        abort(403, 'Tidak punya akses dashboard');
+
+        // Manager, Admin, HR, Super Admin ke dashboard
+        return redirect()->route('admin.dashboard.index');
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

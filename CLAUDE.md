@@ -610,15 +610,23 @@ const CreateAssessmentModal = ({ isOpen, onClose, setRefetch }) => {
                 onClose();
                 setRefetch(p => !p);
             },
-            onError: (errs) => {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: getInertiaErrorMessage(errs) });
+            onError: (errors) => {
+                Swal.fire(getInertiaErrorSwal(errors));
             },
         });
     };
 
     return (
-        <Modal show={isOpen} onClose={onClose} maxWidth="md">
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <Modal show={isOpen} onClose={onClose} title={t("global.user")}
+            type="add"
+            maxWidth="5xl"
+            onCancel={() => {
+                onClose();
+                reset();
+            }}
+            processing={processing}
+            onSubmit={handleSubmit}
+        >
                 <h2 className="text-lg font-semibold text-gray-800">Tambah Penilaian</h2>
 
                 <div>
@@ -642,15 +650,6 @@ const CreateAssessmentModal = ({ isOpen, onClose, setRefetch }) => {
                     />
                     <InputError message={errors.period} className="mt-1" />
                 </div>
-
-                <div className="flex justify-end gap-2">
-                    <button type="button" onClick={onClose}
-                        className="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-100">
-                        Batal
-                    </button>
-                    <SubmitButton processing={processing}>Simpan</SubmitButton>
-                </div>
-            </form>
         </Modal>
     );
 };
@@ -699,17 +698,25 @@ const EditModal = ({ isOpen, onClose, item, setRefetch }) => {
                 onClose();
                 setRefetch(p => !p);
             },
-            onError: (errs) => {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: getInertiaErrorMessage(errs) });
+            onError: (errors) => {
+                Swal.fire(getInertiaErrorSwal(errors));
             },
         });
     };
 
     return (
-        <Modal show={isOpen} onClose={onClose} maxWidth="md">
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <h2 className="text-lg font-semibold text-gray-800">Edit Penilaian</h2>
-
+        <Modal show={isOpen}
+            onClose={onClose}
+            title="Judul Fitur"
+            type="edit"
+            maxWidth="5xl"
+            onCancel={() => {
+                onClose();
+                reset();
+            }}
+            processing={processing}
+            onSubmit={handleSubmit}
+        >
                 <div>
                     <InputLabel value="Judul" />
                     <TextInput
@@ -739,7 +746,6 @@ const EditModal = ({ isOpen, onClose, item, setRefetch }) => {
                     </button>
                     <SubmitButton processing={processing}>Update</SubmitButton>
                 </div>
-            </form>
         </Modal>
     );
 };

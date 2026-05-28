@@ -13,7 +13,7 @@ import { Country, State, City } from 'country-state-city';
 import UploadInputWithPreview from '@/Components/Molecules/UploadInputWithView';
 import { useTranslation } from 'react-i18next';
 
-import { getInertiaErrorMessage } from '@/Utils/getErrorMessage';
+import { getInertiaErrorSwal } from '@/Utils/getErrorMessage';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -53,8 +53,7 @@ export default function UpdateProfileInformation({
                 showToast(t('user.updatedMessage'), 'success');
             },
             onError: (errors) => {
-                const errorMessage = getInertiaErrorMessage(errors.message, i18n.language);
-                Swal.fire("Error!", errorMessage, "error");
+                Swal.fire(getInertiaErrorSwal(errors));
             },
         });
     };

@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 class WhistleblowService
 {
+    const BATA_DEFAULT   = 3;
+    const CENDOL_DEFAULT = 5;
+
     public function getPaginatedData(Request $request)
     {
         $perPage = $request->input('perPage', 10);
@@ -54,7 +57,7 @@ class WhistleblowService
 
         $quota = WhistleblowQuota::firstOrCreate(
             ['user_id' => $reporterId, 'period' => now()->format('Y-m')],
-            ['bata_remaining' => 3, 'cendol_remaining' => 5]
+            ['bata_remaining' => self::BATA_DEFAULT, 'cendol_remaining' => self::CENDOL_DEFAULT]
         );
 
         if ($data['type'] === 'bata' && $quota->bata_remaining <= 0) {
@@ -92,11 +95,27 @@ class WhistleblowService
         WhistleblowReport::whereIn('id', $ids)->delete();
     }
 
+    public function getMyReports(int $userId, Request $request)
+    {
+        $perPage = $request->input('perPage', 10);
+        $page    = $request->input('pageIndex', 1);
+        $type    = $request->input('type');
+
+        $query = WhistleblowReport::with(['reported:id,name,photo_profile'])
+            ->where('reporter_id', $userId);
+
+        if (!empty($type)) {
+            $query->where('type', $type);
+        }
+
+        return $query->orderByDesc('created_at')->paginate($perPage, ['*'], 'page', $page);
+    }
+
     public function getQuota(int $userId): WhistleblowQuota
     {
         return WhistleblowQuota::firstOrCreate(
             ['user_id' => $userId, 'period' => now()->format('Y-m')],
-            ['bata_remaining' => 3, 'cendol_remaining' => 5]
+            ['bata_remaining' => self::BATA_DEFAULT, 'cendol_remaining' => self::CENDOL_DEFAULT]
         );
     }
 }

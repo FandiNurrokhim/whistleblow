@@ -22,7 +22,9 @@ class MenuHelper
             return true;
         }
         $parts = explode('.', $menu->route);
-        $permission = $parts[1] ?? $parts[0];
+        // Untuk route 'admin.xxx.yyy' → ambil $parts[1] (misal: 'dashboard', 'user', 'role')
+        // Untuk route 'xxx.yyy'       → ambil $parts[0] (misal: 'whistleblow', 'assessment')
+        $permission = ($parts[0] === 'admin') ? ($parts[1] ?? $parts[0]) : $parts[0];
         return auth()->user()->can($permission);
     }
 

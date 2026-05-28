@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 abstract class Controller
 {
@@ -21,8 +22,8 @@ abstract class Controller
             throw new \Exception('Title slug is invalid after slug conversion');
         }
 
-        $folderPath = $folderName . '/' . $slug;
-        $fileName = time() . '_' . $file->getClientOriginalName();
+        $folderPath = 'uploads/' . $folderName . '/' . now()->format('Y/m') . '/' . $slug;
+        $fileName   = time() . '_' . $file->getClientOriginalName();
 
         // Simpan file ke storage/app/public/...
         $path = $file->storeAs($folderPath, $fileName, 'public');
@@ -32,18 +33,18 @@ abstract class Controller
 
     public function updateFile($folderName, $newFile, $oldFilePath, $titleSlug)
     {
-        if (!$newFile) {
+        if (!($newFile instanceof UploadedFile)) {
             return $oldFilePath;
         }
 
         $newFilePath = $this->uploadFile($folderName, $newFile, $titleSlug);
 
-        // Hapus file lama jika ada
+        // Hanya hapus file lama jika upload baru berhasil
         if ($newFilePath && $oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
             Storage::disk('public')->delete($oldFilePath);
         }
 
-        return $newFilePath;
+        return $newFilePath ?: $oldFilePath;
     }
 
     public function deleteFile($filePath)

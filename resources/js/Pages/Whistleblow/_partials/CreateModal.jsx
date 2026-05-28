@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Select from "react-select";
 
 import Modal from "@/Components/Modal";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
-import SubmitButton from "@/Components/Atoms/SubmitButton";
-import SelectBox from "@/Components/Atoms/SelectBox";
 import Textarea from "@/Components/Atoms/Textarea";
 import { getInertiaErrorMessage } from "@/Utils/getErrorMessage";
 
 const TYPE_OPTIONS = [
-    { value: "bata", label: "🧱 Bata — Laporkan Insiden / Pelanggaran" },
+    { value: "bata",   label: "🧱 Bata — Laporkan Insiden / Pelanggaran" },
     { value: "cendol", label: "🍹 Cendol — Apresiasi Budaya Kerja Baik" },
 ];
 
@@ -21,16 +20,17 @@ const CreateModal = ({ isOpen, onClose, setRefetch }) => {
     const [users, setUsers] = useState([]);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        reported_id: "",
-        type: "bata",
-        reason: "",
+        reported_id:   "",
+        type:          "bata",
+        reason:        "",
         incident_date: "",
     });
 
     useEffect(() => {
-        if (isOpen) {
-            axios.get(route("admin.user.select-data")).then(({ data: res }) => setUsers(res.data ?? [])).catch(() => { });
-        }
+        if (!isOpen) return;
+        axios.get(route("admin.user.select-data"))
+            .then(({ data: res }) => setUsers(res.data ?? []))
+            .catch(() => {});
     }, [isOpen]);
 
     const handleSubmit = (e) => {
@@ -49,16 +49,19 @@ const CreateModal = ({ isOpen, onClose, setRefetch }) => {
         });
     };
 
+    const userOptions      = users.map((u) => ({ value: u.id, label: u.name }));
+    const selectedReported = userOptions.find((o) => o.value == data.reported_id) || null;
+
     return (
-        <Modal show={isOpen} onClose={onClose} title="Tambah Laporan Bata/Cendol"
+        <Modal
+            show={isOpen}
+            onClose={onClose}
+            title="Laporan Bata / Cendol"
             type="add"
             maxWidth="md"
-            onCancel={() => {
-                onClose();
-                reset();
-            }}
-            processing={processing}
             onSubmit={handleSubmit}
+            onCancel={() => { onClose(); reset(); }}
+            processing={processing}
         >
             <div>
                 <InputLabel value="Tipe Laporan" />
@@ -81,12 +84,15 @@ const CreateModal = ({ isOpen, onClose, setRefetch }) => {
 
             <div>
                 <InputLabel value="Orang yang Dilaporkan" />
-                <SelectBox
+                <Select
+                    options={userOptions}
+                    value={selectedReported}
+                    onChange={(opt) => setData("reported_id", opt ? opt.value : "")}
+                    placeholder="-- Pilih Karyawan --"
+                    isClearable
+                    menuPlacement="auto"
+                    menuShouldScrollIntoView={false}
                     className="mt-1"
-                    placeholder="-- Pilih --"
-                    value={data.reported_id}
-                    onChange={(e) => setData("reported_id", e.target.value)}
-                    options={users.map((u) => ({ value: u.id, label: u.name }))}
                 />
                 <InputError message={errors.reported_id} className="mt-1" />
             </div>

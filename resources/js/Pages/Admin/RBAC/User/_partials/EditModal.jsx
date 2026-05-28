@@ -10,7 +10,7 @@ import InputError from "@/Components/InputError";
 import Select from "react-select";
 import PhoneInput from "react-phone-input-2";
 import UploadInputWithPreview from "@/Components/Molecules/UploadInputWithView";
-import { getInertiaErrorMessage } from "@/Utils/getErrorMessage";
+import { getInertiaErrorSwal } from "@/Utils/getErrorMessage";
 import { useTranslation } from "react-i18next";
 
 const EditModal = ({
@@ -95,13 +95,7 @@ const EditModal = ({
                 });
             },
             onError: (errors) => {
-                const errorMessage = getInertiaErrorMessage(errors);
-                console.log(errorMessage);
-                Swal.fire({
-                    icon: "info",
-                    title: "Perhatian",
-                    text: errorMessage || "Terdapat inputan yang belum sesuai, silakan periksa kembali.",
-                });
+                Swal.fire(getInertiaErrorSwal(errors));
             },
         });
     };

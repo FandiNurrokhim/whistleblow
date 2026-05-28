@@ -77,10 +77,7 @@ const AssessmentCriteriaTable = () => {
         {
             header: "Status",
             accessor: (row) => (
-                <StatusBadge
-                    status={row.is_active ? "active" : "inactive"}
-                    colorMap={{ active: "success", inactive: "danger" }}
-                />
+                <StatusBadge value={row.is_active} />
             ),
             className: "text-center",
         },

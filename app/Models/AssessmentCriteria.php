@@ -10,6 +10,8 @@ class AssessmentCriteria extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'assessment_criteria';
+
     protected $fillable = [
         'name',
         'description',

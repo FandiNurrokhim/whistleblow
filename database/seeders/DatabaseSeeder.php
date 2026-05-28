@@ -47,5 +47,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(MenuSeeder::class);
+        $this->call(WhistleblowQuotaSeeder::class);
+        $this->call(AssessmentCriteriaSeeder::class);
+        $this->call(AssessmentSeeder::class);
     }
 }

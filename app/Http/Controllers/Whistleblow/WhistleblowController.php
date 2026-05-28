@@ -6,25 +6,59 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\WhistleblowReport;
 use App\Services\WhistleblowService;
+use App\Services\AssessmentCriteriaService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class WhistleblowController extends Controller
 {
+    const ADMIN_ROLES = ['Super Admin', 'Admin', 'HR'];
+
     public function __construct(protected WhistleblowService $service) {}
 
     public function index()
     {
-        $quota = $this->service->getQuota(auth()->id());
+        $user    = auth()->user();
+        $quota   = $this->service->getQuota($user->id);
+        $isAdmin = $user->hasAnyRole(self::ADMIN_ROLES);
 
-        return Inertia::render('Whistleblow/Index', [
-            'quota' => $quota,
+        if ($isAdmin) {
+            return Inertia::render('Whistleblow/Index', [
+                'quota'   => $quota,
+                'isAdmin' => true,
+            ]);
+        }
+
+        $users = \App\Models\User::where('id', '!=', $user->id)
+            ->whereDoesntHave('roles', fn($q) => $q->where('name', 'Super Admin'))
+            ->orderBy('name')
+            ->get(['id', 'name', 'email', 'photo_profile']);
+
+        return Inertia::render('Whistleblow/StaffIndex', [
+            'quota'   => $quota,
+            'users'   => $users,
+            'isAdmin' => false,
         ]);
     }
 
     public function data(Request $request)
     {
+        $user = auth()->user();
+
+        if (!$user->hasAnyRole(self::ADMIN_ROLES)) {
+            return response()->json(
+                $this->service->getMyReports($user->id, $request)
+            );
+        }
+
         return response()->json($this->service->getPaginatedData($request));
+    }
+
+    public function myReports(Request $request)
+    {
+        return response()->json(
+            $this->service->getMyReports(auth()->id(), $request)
+        );
     }
 
     public function store(Request $request)
@@ -52,6 +86,8 @@ class WhistleblowController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
+        abort_unless(auth()->user()->hasAnyRole(self::ADMIN_ROLES), 403);
+
         $report    = WhistleblowReport::findOrFail($id);
         $validated = $request->validate([
             'status'      => 'required|in:pending,reviewed,resolved',
@@ -59,23 +95,28 @@ class WhistleblowController extends Controller
         ]);
 
         $this->service->updateStatus($report, $validated['status'], $validated['admin_notes'] ?? null);
-
         return back()->with('success', 'Status laporan berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $report = WhistleblowReport::findOrFail($id);
-        $this->service->delete($report);
 
+        abort_unless(
+            auth()->user()->hasAnyRole(self::ADMIN_ROLES) || $report->reporter_id === auth()->id(),
+            403
+        );
+
+        $this->service->delete($report);
         return ApiResponse::success(null, 'Laporan berhasil dihapus.');
     }
 
     public function bulkDelete(Request $request)
     {
+        abort_unless(auth()->user()->hasAnyRole(self::ADMIN_ROLES), 403);
+
         $ids = $request->validate(['ids' => 'required|array'])['ids'];
         $this->service->bulkDelete($ids);
-
         return ApiResponse::success(null, 'Bulk delete berhasil.');
     }
 }

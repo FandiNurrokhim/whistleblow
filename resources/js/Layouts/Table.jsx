@@ -259,24 +259,28 @@ function TableToolbar({
       </div>
       <div className="flex items-center space-x-2">
         {selectedRows.size > 0 ? (
-          <>
-            {actions && Array.isArray(actions) && (
-              <div className="flex gap-2">
-                {actions.map((action, index) => (
-                  <button
-                    key={index}
-                    onClick={() => action.action(Array.from(selectedRows))}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-colors ${action.className}`}
-                  >
-                    {action.icon}
-                    {action.label}
-                  </button>
-                ))}
-              </div>
+          <div className="flex gap-2">
+            {actions && Array.isArray(actions) && actions.map((action, index) => (
+              <button
+                key={index}
+                onClick={() => action.action(Array.from(selectedRows))}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-colors ${action.className}`}
+              >
+                {action.icon}
+                {action.label}
+              </button>
+            ))}
+            {onDeleteSelected && (
+              <button
+                onClick={handleDelete}
+                className="mt-4 sm:mt-0 inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 transition-all duration-300 ease-in-out hover:bg-red-800"
+              >
+                Hapus {selectedRows.size} data terpilih
+              </button>
             )}
-          </>
+          </div>
         ) : (
-           onAdd && !hideAddButton && (
+          onAdd && !hideAddButton && (
             <button
               onClick={onAdd}
               className="mt-4 sm:mt-0 inline-flex items-center justify-center px-6 py-3 bg-[#D9B36A] text-white rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D9B36A] transition-all duration-300 ease-in-out hover:bg-[#c49d4e]"

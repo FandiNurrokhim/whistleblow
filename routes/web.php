@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     require __DIR__ . '/route-files/assessment-criteria.php';
     require __DIR__ . '/route-files/assessment.php';
     require __DIR__ . '/route-files/whistleblow.php';
+    require __DIR__ . '/route-files/report.php';
 });
 
 // Route::get('/categories', [CategoryController::class, 'getCategories']);

@@ -10,7 +10,7 @@ import InputError from "@/Components/InputError";
 import PermissionToggle from "@/Components/Molecules/PermissionToggle";
 
 // utils
-import { getInertiaErrorMessage } from "@/Utils/getErrorMessage";
+import { getInertiaErrorSwal } from "@/Utils/getErrorMessage";
 
 // Translate
 import { useTranslation } from "react-i18next";
@@ -51,9 +51,7 @@ const EditModal = ({ isOpen, onClose, role, setRefetch }) => {
                 });
             },
             onError: (errors) => {
-                const errorMessage = getInertiaErrorMessage(errors.message, i18n.language);
-                console.error("Error updating role:", errors);
-                Swal.fire("Error!", errorMessage, "error");
+                Swal.fire(getInertiaErrorSwal(errors));
             },
         });
     };

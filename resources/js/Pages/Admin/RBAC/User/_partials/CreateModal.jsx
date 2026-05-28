@@ -14,7 +14,7 @@ import UploadInputWithPreview from "@/Components/Molecules/UploadInputWithView";
 
 
 // Utils
-import { getInertiaErrorMessage } from "@/Utils/getErrorMessage";
+import { getInertiaErrorSwal } from "@/Utils/getErrorMessage";
 
 // Translation
 import { useTranslation } from "react-i18next";
@@ -86,8 +86,7 @@ const CreateModal = ({ isOpen, onClose, setRefetch }) => {
                 });
             },
             onError: (errors) => {
-                const errorMessage = getInertiaErrorMessage(errors.message, i18n.language);
-                Swal.fire("Error!", errorMessage, "error");
+                Swal.fire(getInertiaErrorSwal(errors));
             },
         });
     };

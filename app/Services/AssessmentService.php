@@ -131,4 +131,77 @@ class AssessmentService
             ->orderBy('name')
             ->get();
     }
+
+    public function getAssessmentTargets(int $assessorId, string $period): array
+    {
+        $assessedIds = Assessment::where('assessor_id', $assessorId)
+            ->where('period', $period)
+            ->pluck('id', 'assessee_id');
+
+        $users = \App\Models\User::where('id', '!=', $assessorId)
+            ->whereDoesntHave('roles', fn($q) => $q->where('name', 'Super Admin'))
+            ->orderBy('name')
+            ->get(['id', 'name', 'email', 'photo_profile']);
+
+        return $users->map(function ($user) use ($assessedIds, $assessorId, $period) {
+            $assessmentId = $assessedIds->get($user->id);
+            return [
+                'user'          => $user,
+                'assessed'      => $assessedIds->has($user->id),
+                'assessment_id' => $assessmentId,
+            ];
+        })->toArray();
+    }
+
+    public function getMyScores(int $userId, string $period): array
+    {
+        $assessments = Assessment::with(['answers.criteria', 'assessor:id,name'])
+            ->where('assessee_id', $userId)
+            ->where('period', $period)
+            ->where('status', 'completed')
+            ->whereNotNull('final_score')
+            ->get();
+
+        if ($assessments->isEmpty()) {
+            return [
+                'avg_score'              => null,
+                'total_assessments'      => 0,
+                'manager_count'          => 0,
+                'peer_count'             => 0,
+                'by_criteria'            => [],
+                'assessments'            => [],
+            ];
+        }
+
+        $byCriteria = [];
+        foreach ($assessments as $assessment) {
+            foreach ($assessment->answers as $answer) {
+                $name = $answer->criteria?->name ?? "Kriteria #{$answer->criteria_id}";
+                if (!isset($byCriteria[$name])) {
+                    $byCriteria[$name] = ['total' => 0, 'count' => 0];
+                }
+                $byCriteria[$name]['total'] += $answer->score;
+                $byCriteria[$name]['count']++;
+            }
+        }
+
+        $criteriaBreakdown = collect($byCriteria)->map(fn($v, $k) => [
+            'name'  => $k,
+            'score' => round($v['total'] / $v['count'], 2),
+        ])->values()->toArray();
+
+        return [
+            'avg_score'         => round($assessments->avg('final_score'), 2),
+            'total_assessments' => $assessments->count(),
+            'manager_count'     => $assessments->where('type', 'manager_to_staff')->count(),
+            'peer_count'        => $assessments->where('type', 'staff_to_staff')->count(),
+            'by_criteria'       => $criteriaBreakdown,
+            'assessments'       => $assessments->map(fn($a) => [
+                'id'          => $a->id,
+                'assessor'    => $a->assessor,
+                'type'        => $a->type,
+                'final_score' => $a->final_score,
+            ])->toArray(),
+        ];
+    }
 }

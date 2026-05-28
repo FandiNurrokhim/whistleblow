@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class RoleController extends Controller
 {
     public function index()
     {
-        return inertia('admin/RBAC/Roles/Index');
+        return Inertia::render('Admin/RBAC/Roles/Index');
     }
 
     public function data(Request $request)
