@@ -1,0 +1,6 @@
+# Jangan upload node_modules
+node_modules/
+
+# Jangan upload folder build (misal hasil build React/Vite)
+build/
+dist/
