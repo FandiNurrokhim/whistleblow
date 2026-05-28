@@ -2,6 +2,20 @@
 
 Platform manajemen kinerja tim yang transparan — penilaian antar karyawan, pelaporan insiden budaya kerja, dan dashboard laporan kinerja.
 
+==========================================
+AKUN LOGIN
+==========================================
+admin: 
+superadmin@gmail.com
+password
+
+staff:
+staff1@gmail.com - staff5@gmail.com
+password
+
+manager:
+manager@gmail.com
+password
 ---
 
 ## Stack Teknologi
@@ -224,3 +238,15 @@ php artisan storage:link
 # Reset kuota whistleblow bulan ini
 php artisan db:seed --class=WhistleblowQuotaSeeder
 ```
+<img width="1918" height="908" alt="image" src="https://github.com/user-attachments/assets/cb711ed8-88d3-4d73-bafc-d979e67184de" />
+<img width="1650" height="906" alt="image" src="https://github.com/user-attachments/assets/1dbe6abf-ec19-4052-907b-271be5f097be" />
+<img width="1917" height="908" alt="image" src="https://github.com/user-attachments/assets/aec643c5-a492-4823-9426-2ab4b3e9b7b4" />
+<img width="1918" height="916" alt="image" src="https://github.com/user-attachments/assets/45bf591c-019c-4675-8eb7-9e3a3abe2ffe" />
+<img width="1917" height="900" alt="image" src="https://github.com/user-attachments/assets/e3824ee5-72b3-4795-92cb-2e4dc3e811e8" />
+
+HALAMAN ADMIN
+<img width="1919" height="916" alt="image" src="https://github.com/user-attachments/assets/033b0a2a-f830-45e4-b808-b1f736b0240f" />
+
+
+
+
